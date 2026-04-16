@@ -22,6 +22,13 @@ def create_app():
     # =========================
     db.init_app(app)
     ma.init_app(app)
+
+    # 👇 ✅ ADD THIS BLOCK (CRITICAL)
+    from models.workout import Workout
+    from models.exercise import Exercise
+    from models.workout_exercise import WorkoutExercise
+
+    # 👇 Keep this AFTER models are imported
     Migrate(app, db)
 
     # =========================

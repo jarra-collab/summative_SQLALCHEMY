@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 
 from extensions import db
-from models import Exercise
+from models.exercise import Exercise
 from schemas import ExerciseSchema
 
 

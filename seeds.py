@@ -1,6 +1,10 @@
 from app import create_app
 from extensions import db
-from models import Workout, Exercise, WorkoutExercise
+
+from models.workout import Workout
+from models.exercise import Exercise
+from models.workout_exercise import WorkoutExercise
+
 
 app = create_app()
 
@@ -63,23 +67,19 @@ def seed_database():
             workout_id=leg_day.id,
             exercise_id=squat.id,
             sets=4,
-            reps=10,
-            duration_seconds=None
+            reps=10
         )
 
         link2 = WorkoutExercise(
             workout_id=full_body.id,
             exercise_id=push_up.id,
             sets=3,
-            reps=15,
-            duration_seconds=None
+            reps=15
         )
 
         link3 = WorkoutExercise(
             workout_id=full_body.id,
             exercise_id=plank.id,
-            sets=None,
-            reps=None,
             duration_seconds=60
         )
 

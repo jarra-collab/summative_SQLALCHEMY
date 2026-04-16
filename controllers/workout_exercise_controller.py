@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from extensions import db
-from models import Workout, Exercise, WorkoutExercise
+from models.workout_exercise import WorkoutExercise
 from schemas import WorkoutExerciseSchema
 
 
