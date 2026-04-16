@@ -1,215 +1,144 @@
 # 🏋️ Workout Tracker API
 
-A simple Flask-based backend API for managing workouts and exercises. This project demonstrates a clean relational database design using SQLAlchemy with a many-to-many relationship and additional metadata.
+A Flask REST API for managing workouts and exercises using a relational database design with SQLAlchemy. The project follows an **app factory pattern**, uses **Blueprints**, **Flask-Migrate**, and **Marshmallow schemas** for a clean and scalable backend architecture.
 
 ---
 
 ## 🚀 Features
 
-* Create and manage workouts
-* Create and manage exercises
-* Assign exercises to workouts
-* Track:
-
-  * Sets
-  * Reps
-  * Duration
-* Data validation at model level
-* Database migrations using Flask-Migrate
+- Create, read, and delete workouts
+- Create, read, and delete exercises
+- Assign exercises to workouts (many-to-many relationship)
+- Track workout details (sets, reps, duration)
+- Model-level validation (rules enforced in Python models)
+- RESTful API design using Blueprints
+- Database migrations using Flask-Migrate
 
 ---
 
 ## 🧱 Tech Stack
 
-* Python 3
-* Flask
-* Flask-SQLAlchemy
-* Flask-Migrate
-* SQLite (development)
-* Pipenv (environment management)
+- Python 3
+- Flask
+- Flask-SQLAlchemy
+- Flask-Migrate
+- Flask-Marshmallow
+- Marshmallow-SQLAlchemy
+- SQLite (development)
+- Pipenv
 
 ---
 
 ## 📂 Project Structure
-
-```
-.
 ├── app.py
-├── models.py
+├── config.py
 ├── extensions.py
+├── schemas.py
+│
+├── models/
+│ ├── init.py
+│ ├── workout.py
+│ ├── exercise.py
+│ └── workout_exercise.py
+│
+├── controllers/
+│ ├── workout_controller.py
+│ ├── exercise_controller.py
+│ └── workout_exercise_controller.py
+│
 ├── migrations/
 ├── Pipfile
 └── README.md
-```
+
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the repository
-
-```
-git clone <your-repo-url>
-cd <project-folder>
-```
-
----
-
-### 2. Install dependencies (Pipenv)
-
-```
+### Install dependencies
+```bash
 pipenv install
-```
-
----
-
-### 3. Activate virtual environment
-
-```
 pipenv shell
-```
+Set Flask app
+export FLASK_APP=app:create_app
 
----
+Windows PowerShell:
 
-### 4. Set environment variable
+$env:FLASK_APP="app:create_app"
+🗄️ Database Setup (Flask-Migrate)
 
-#### Linux / macOS
+Initialize migrations (first time only):
 
-```
-export FLASK_APP=app.py
-```
-
-#### Windows (PowerShell)
-
-```
-setx FLASK_APP app.py
-```
-
----
-
-## 🗄️ Database Setup
-
-### Initialize migrations (first time only)
-
-```
 flask db init
-```
 
-### Generate migration
+Generate migration:
 
-```
 flask db migrate -m "initial migration"
-```
 
-### Apply migration
+Apply migration:
 
-```
 flask db upgrade
-```
 
----
+After model changes:
 
-## 🧠 Database Models
-
-### Workout
-
-* `id`
-* `name` (unique)
-* `duration_minutes`
-* `created_at`
-
----
-
-### Exercise
-
-* `id`
-* `name` (unique)
-* `muscle_group` (legs, arms, core, back, full body)
-* `equipment`
-
----
-
-### WorkoutExercise (Join Table)
-
-* Links workouts and exercises
-* Additional fields:
-
-  * `sets`
-  * `reps`
-  * `duration_seconds`
-
----
-
-## 🔗 Relationships
-
-* A **Workout** has many **Exercises**
-* An **Exercise** can belong to many **Workouts**
-* Managed via `WorkoutExercise`
-
----
-
-## 🧪 Example Usage
-
-### Create a workout
-
-```python
-from models import Workout
+flask db migrate -m "update"
+flask db upgrade
+    Database Models
+Workout
+id
+name (unique)
+duration_minutes
+created_at
+Exercise
+id
+name (unique)
+muscle_group (legs, arms, core, back, full body)
+equipment (optional)
+WorkoutExercise (Join Table)
+workout_id (FK)
+exercise_id (FK)
+sets
+reps
+duration_seconds
+🔗 Relationships
+A Workout has many Exercises
+An Exercise belongs to many Workouts
+Managed through WorkoutExercise join table
+📡 API Endpoints
+Workouts
+POST /workouts/
+GET /workouts/
+GET /workouts/<id>
+DELETE /workouts/<id>
+Exercises
+POST /exercises/
+GET /exercises/
+GET /exercises/<id>
+DELETE /exercises/<id>
+Workout Exercises
+POST /workout-exercises/
+GET /workout-exercises/
+DELETE /workout-exercises/<id>
+🧪 Example Usage
+Create workout
+from models.workout import Workout
 from extensions import db
 
 workout = Workout(name="Morning Routine", duration_minutes=30)
 db.session.add(workout)
 db.session.commit()
-```
-
----
-
-### Create an exercise
-
-```python
-from models import Exercise
+Create exercise
+from models.exercise import Exercise
 
 exercise = Exercise(name="Push Ups", muscle_group="arms")
 db.session.add(exercise)
 db.session.commit()
-```
+Link exercise to workout
+from models.workout_exercise import WorkoutExercise
 
----
-
-### Link exercise to workout
-
-```python
-from models import WorkoutExercise
-
-we = WorkoutExercise(
+link = WorkoutExercise(
     workout_id=1,
     exercise_id=1,
     sets=3,
     reps=15
 )
-
-db.session.add(we)
-db.session.commit()
-```
-
----
-
-## ⚠️ Notes
-
-* SQLite is used for development and does not support full transactional DDL.
-* Model-level validation ensures:
-
-  * Positive durations
-  * Valid muscle groups
-  * Minimum name length
-
----
-
-## 📌 Future Improvements
-
-* REST API endpoints (CRUD)
-* User authentication
-* Workout history tracking
-* Progress analytics
-* PostgreSQL support for production
-
-
